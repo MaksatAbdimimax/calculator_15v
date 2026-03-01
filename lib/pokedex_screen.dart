@@ -47,7 +47,6 @@ class _PokedexScreenState extends State<PokedexScreen> {
     ];
   }
 
-
   @override
   Widget build(BuildContext context) {
 
@@ -91,7 +90,7 @@ class _PokedexScreenState extends State<PokedexScreen> {
         );
       },
       child: Container(
-      
+
         decoration: BoxDecoration(
           border: Border.all(color: model.color, width: 10),
           borderRadius: BorderRadius.circular(16),

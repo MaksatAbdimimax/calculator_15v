@@ -1,8 +1,18 @@
-import 'package:calculator_15v/calculator_screen.dart';
-import 'package:calculator_15v/pokedex_screen.dart';
 import 'package:flutter/material.dart';
+import 'calculator_page.dart';
 
 void main() {
-  runApp(const MaterialApp(home: PokedexScreen(),));
+  runApp(const MyApp());
+}
 
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: CalculatorPage(),
+    );
+  }
 }
