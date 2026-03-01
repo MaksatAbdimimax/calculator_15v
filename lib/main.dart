@@ -1,18 +1,15 @@
+import 'package:calculator_15v/data/harry_screen.dart';
 import 'package:flutter/material.dart';
 import 'calculator_page.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Hive.initFlutter();
+
+  Hive.registerAdapter(HarryModelAdapter());
+
+  await Hive.openBox<HarryModel>('harryBox');
+
   runApp(const MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: CalculatorPage(),
-    );
-  }
 }

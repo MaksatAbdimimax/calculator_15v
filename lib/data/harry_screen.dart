@@ -12,22 +12,64 @@ class HarryScreen extends StatefulWidget {
 class _HarryScreenState extends State<HarryScreen> {
   final dio = Dio();
 
+  List<HarryModel> characters = [];
+  bool isLoading = true;
+
   @override
-  Widget build(BuildContext context) {
+  void initState() {
+    super.initState();
     getHttp();
-   return Scaffold();
   }
 
-  Future<List<HarryModel>> getHttp() async {
-    final response = await dio.get('https://potterapi-fedeperin.vercel.app/en/characters');
+  Future<void> getHttp() async {
+    final box = Hive.box<HarryModel>('harryBox');
+
+    // если данные уже есть — берем из Hive
+    if (box.isNotEmpty) {
+      setState(() {
+        characters = box.values.toList();
+        isLoading = false;
+      });
+      return;
+    }
+
+    // если Hive пуст — грузим из API
+    final response = await dio.get(
+        'https://potterapi-fedeperin.vercel.app/en/characters');
 
     final List<dynamic> rawList = response.data;
-    final List<HarryModel> list = rawList
-        .map((e) => HarryModel.fromJson(e as  Map <String, dynamic>))
-        .toList();
-    response.data;
 
-    return  list;
+    final list = rawList
+        .map((e) => HarryModel.fromJson(e as Map<String, dynamic>))
+        .toList();
+
+    // сохраняем
+    await box.addAll(list);
+
+    setState(() {
+      characters = list;
+      isLoading = false;
+    });
   }
 
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("Harry Characters")),
+      body: isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : ListView.builder(
+        itemCount: characters.length,
+        itemBuilder: (context, index) {
+          final character = characters[index];
+
+          return ListTile(
+            leading: Image.network(character.image ?? ""),
+            title: Text(character.fullName ?? "No name"),
+            subtitle: Text(character.hogwartsHouse ?? "No house"),
+          );
+        },
+      ),
+    );
+  }
 }
